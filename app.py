@@ -9,26 +9,25 @@ import time
 
 app = FastAPI()
 
-# Montar archivos estáticos
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-# Configuración de templates
+# Template configuration
 templates = Jinja2Templates(directory="templates")
 
-# Configuración del agente (reemplaza con tus valores reales)
+# Set Agent to Use
 AGENT_ID = "asst_HriembvdBALUOb4R31pVK0uL"
 
-# Inicializar cliente del proyecto
+# Init Client Project
 try:
     project_client = AIProjectClient.from_connection_string(
         credential=DefaultAzureCredential(),
         conn_str="eastus.api.azureml.ms;91c10a2b-e8c8-4e07-82f1-35560d0bb7bc;ai-agents;re-estate-agents"
     )
 except Exception as e:
-    print("Error en la conexión:", e)
+    print("Connection error:", e)
 
 thread = project_client.agents.create_thread()
-print(f"Thread creado, ID: {thread.id}")
+print(f"Thread created, ID: {thread.id}")
 
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
@@ -40,7 +39,7 @@ async def send_message(request: Request):
     user_input = body.get("user_input")
 
     if not user_input:
-        return JSONResponse({"assistant_response": "No se recibió mensaje del usuario."})
+        return JSONResponse({"assistant_response": "User not send a message."})
 
     try:
         project_client.agents.create_message(thread_id=thread.id, role="user", content=user_input)
@@ -53,7 +52,7 @@ async def send_message(request: Request):
             time.sleep(1)
 
         if run.status != "completed":
-            return JSONResponse({"assistant_response": "Ocurrió un error al procesar tu solicitud."})
+            return JSONResponse({"assistant_response": "Error in response"})
 
         messages = project_client.agents.list_messages(thread_id=thread.id)
         assistant_response = ""
@@ -63,11 +62,11 @@ async def send_message(request: Request):
                 content_list = msg.get('content', [])
                 for content in content_list:
                     if 'text' in content:
-                        assistant_response = content['text'].get('value', 'Sin respuesta')
+                        assistant_response = content['text'].get('value', 'Not response')
                 break
 
         return JSONResponse({"assistant_response": assistant_response})
 
     except Exception as e:
-        print("Error procesando mensaje:", e)
-        return JSONResponse({"assistant_response": "Error interno del servidor."})
+        print("Error:", e)
+        return JSONResponse({"assistant_response": "Internal Error"})
