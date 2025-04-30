@@ -33,7 +33,7 @@ openapi = OpenApiTool(
 with project_client:
     agent = project_client.agents.create_agent(
         model="gpt-4o-mini",
-        name="my-assistant",
+        name="MrTasker",
         instructions="""
        You are an assistant for real estate advisors, and your name is Mr. T or Tasker.
 
@@ -96,9 +96,9 @@ with project_client:
     if run.status == "failed":
         print(f"Run failed: {run.last_error}")
 
-    # # Delete the assistant when done
-    project_client.agents.delete_agent(agent.id)
-    print("Deleted agent")
+    # Delete the assistant when done
+    # project_client.agents.delete_agent(agent.id)
+    # print("Deleted agent")
 
     # Fetch and log all messages
     messages = project_client.agents.list_messages(thread_id=thread.id)
