@@ -233,11 +233,56 @@ function openChat() {
 			chat.classList.toggle("chat-visible");
 		}
 
+
+		function formatText(text) {
+  const projects = text.split(/### /).filter(Boolean);
+  let formatted = "";
+
+  projects.forEach(project => {
+    let section = project.trim();
+
+    section = section.replace(
+      /^(\d+\.\sProject ID:[^\n]*)/m,
+      "<h4>$1</h4>"
+    );
+
+    section = section.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+
+    section = section.replace(
+      /!\[.*?\]\((https?:\/\/[^\s)]+)\)/g,
+      (m, url) => `<br><img src="${url}" style="max-width:100%; border-radius:8px; margin:10px 0;" />`
+    );
+
+    section = section.replace(
+      /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
+      (m, label, url) => `<br><a href="${url}" target="_blank" rel="noopener noreferrer">${label}</a>`
+    );
+
+    section = section.replace(/^•\s*$/gm, "");
+    section = section.replace(/^•\s*(.*)$/gm, "• $1");
+    section = section.replace(/Brochure:/g, "<p> <br>Brochure:<br> </p> ");
+
+    section = section
+      .replace(/ - /g, "<br>• ")
+      .replace(/^- /gm, "<br>• ");
+
+    // Separadores tipo '---'
+    section = section.replace(/---/g, "<hr>");
+
+    formatted += `<div style="margin-bottom:20px;">${section}</div>`;
+  });
+
+  return formatted;
+}
+
+
+
+
 		function appendMessage(sender, text) {
 			const chatBox = document.getElementById("chat-messages");
 			const message = document.createElement("div");
 			message.className = `message ${sender}`;
-			message.textContent = text;
+			message.innerHTML = formatText(text); 
 			chatBox.appendChild(message);
 			chatBox.scrollTop = chatBox.scrollHeight;
 		}

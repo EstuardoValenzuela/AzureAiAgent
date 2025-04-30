@@ -15,7 +15,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
 # Set Agent to Use
-AGENT_ID = "asst_eAZYGYnxklTsBBTEjm9qjd7l"
+AGENT_ID = "asst_HriembvdBALUOb4R31pVK0uL"
 
 # Init Client Project
 try:
@@ -52,7 +52,7 @@ async def send_message(request: Request):
             time.sleep(1)
 
         if run.status != "completed":
-            return JSONResponse({"assistant_response": "Error in response"})
+            return JSONResponse({"assistant_response": "Sorry, I didn't find anything about your request, try again"})
 
         messages = project_client.agents.list_messages(thread_id=thread.id)
         assistant_response = ""
