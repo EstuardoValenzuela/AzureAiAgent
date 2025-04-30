@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>Mr. T Agent - Live Demo</title>
+	<title> Tasker - Real Estate Agent</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="icon" type="image/png" href="static/images/icons/favicon.ico"/>
+	<link rel="icon" type="image/png" href="static/images/mrTAgent.jpeg"/>
 	<link rel="stylesheet" type="text/css" href="static/vendor/bootstrap/css/bootstrap.min.css">
 	<link rel="stylesheet" type="text/css" href="static/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
 	<link rel="stylesheet" type="text/css" href="static/vendor/animate/animate.css">
@@ -176,8 +176,8 @@
 	<!-- Chat Widget -->
 	<div id="chat-widget">
 		<div class="chat-header">
-			<img src="https://neutrino-agents.s3.us-east-1.amazonaws.com/resources/whatsapp/real-estate/profile_picture.jpeg" alt="Agente"> <!-- Puedes cambiar por tu imagen -->
-			<span>Mr. T - Agent</span>
+			<img src="static/images/mrTAgent.jpeg" alt="Agente"> <!-- Puedes cambiar por tu imagen -->
+			<span>Tasker - Real Estate</span>
 			<span class="close-btn" onclick="toggleChat()">×</span>
 		</div>
 		<div id="chat-messages" class="chat-messages"></div>
@@ -196,14 +196,37 @@
 
 	<!-- Scripts -->
 	<script>
-		function openChat() {
-			const input = document.getElementById("initialInput").value.trim();
-			if (input !== "") {
-				toggleChat();
-				appendMessage("user", input);
-				replyFromBot("¡Hola! ¿En qué puedo ayudarte hoy?");
-			}
-		}
+function openChat() {
+	const input = document.getElementById("initialInput");
+	const text = input.value.trim();
+
+	if (text !== "") {
+		toggleChat();
+		appendMessage("user", text);
+		input.value = "";
+
+		const typing = document.getElementById("typingIndicator");
+		typing.style.display = "block";
+
+		fetch("/send_message", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify({ user_input: text })
+		})
+		.then(response => response.json())
+		.then(data => {
+			typing.style.display = "none";
+			appendMessage("bot", data.assistant_response || "Sin respuesta del agente.");
+		})
+		.catch(error => {
+			typing.style.display = "none";
+			appendMessage("bot", "Hubo un error al contactar al agente.");
+			console.error("Error:", error);
+		});
+	}
+}
 
 		function toggleChat() {
 			const chat = document.getElementById("chat-widget");
