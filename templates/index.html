@@ -251,45 +251,70 @@ function openChat() {
 
 
 		function formatText(text) {
-  const projects = text.split(/### /).filter(Boolean);
-  let formatted = "";
+			const projects = text.split(/### /).filter(Boolean);
+			let formatted = "";
 
-  projects.forEach(project => {
-    let section = project.trim();
+			projects.forEach(project => {
+				let section = project.trim();
 
     section = section.replace(
       /^(\d+\.\sProject ID:[^\n]*)/m,
-      "<h4>$1</h4>"
+      (_, t) => `<h2>${t}</h4>`
     );
 
+    // 3. Negritas
     section = section.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
 
+    // 4. Imágenes Markdown
     section = section.replace(
       /!\[.*?\]\((https?:\/\/[^\s)]+)\)/g,
-      (m, url) => `<br><img src="${url}" style="max-width:100%; border-radius:8px; margin:10px 0;" />`
+      (_, url) => `<img src="${url}" style="max-width:100%; border-radius:8px; margin:10px 0;" />`
     );
 
+    // 5. Enlaces Markdown
     section = section.replace(
       /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
-      (m, label, url) => `<br><a href="${url}" target="_blank" rel="noopener noreferrer">${label}</a>`
+      (_, label, url) => `<a href="${url}" target="_blank" rel="noopener noreferrer">${label}</a>`
     );
 
-    section = section.replace(/^•\s*$/gm, "");
-    section = section.replace(/^•\s*(.*)$/gm, "• $1");
-    section = section.replace(/Brochure:/g, "<p> <br>Brochure:<br> </p> ");
+    // 6. Separar líneas
+    const lines = section.split("\n").map(l => l.trim()).filter(Boolean);
 
-    section = section
-      .replace(/ - /g, "<br>• ")
-      .replace(/^- /gm, "<br>• ");
+    // 7. Recolectar listas e párrafos
+    let html = "";
+    let inList = false;
 
-    // Separadores tipo '---'
-    section = section.replace(/---/g, "<hr>");
+    lines.forEach(line => {
+      if (/^[-•]\s+/.test(line)) {
+        // línea de lista
+        if (!inList) {
+          inList = true;
+          html += "<ul>";
+        }
+        const item = line.replace(/^[-•]\s+/, "");
+        html += `<li>${item}</li>`;
+      } else {
+        // cierra lista si estaba abierta
+        if (inList) {
+          inList = false;
+          html += "</ul>";
+        }
+        // párrafo normal
+        html += `<p>${line}</p>`;
+      }
+    });
 
-    formatted += `<div style="margin-bottom:20px;">${section}</div>`;
+    if (inList) html += "</ul>";
+
+    // 8. Separador horizontal
+    html = html.replace(/---/g, "<hr>");
+
+    formatted += `<div style="margin-bottom:30px;">${html}</div>`;
   });
 
   return formatted;
 }
+
 
 
 
