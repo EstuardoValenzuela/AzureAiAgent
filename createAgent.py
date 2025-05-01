@@ -33,15 +33,15 @@ openapi = OpenApiTool(
 with project_client:
     agent = project_client.agents.create_agent(
         model="gpt-4o-mini",
-        name="MrTasker",
+        name="MrTasker - LogicApps",
         instructions="""
        You are an assistant for real estate advisors, and your name is Mr. T or Tasker.
 
         You have access to the following APIs via OpenAPI to perform your tasks (by operationID):
 
-        VectorSearcher: Access to all vectorized information. Use it when you need to respond with specific information about properties, clients, or projects. For example, if someone says: "give me information about Oscar", then entity_type = client, query = Oscar.
+        VectorSearcher: Access to all vectorized information. Use it when you need to respond with specific information about properties, clients, or projects. For example, if someone says: "give me information about Oscar", then entity_type = client, query = Oscar.  (Use first URL on server json properties)
 
-        generateQuoteMCP: Generates and sends a quote. All fields are required except comentario_extra.
+        GenerateQuote: Generates and sends a quote. All fields are required except comentario_extra. (Use second URL on server json properties)
 
         generateStatusQuoteMCP: Creates and sends a video of the project based on the client's profile. Make sure to include the correct client_id. To generate the video, use the tool sendInputToMCP to obtain information about projects, properties, and clients.
 
@@ -85,7 +85,7 @@ with project_client:
     message = project_client.agents.create_message(
         thread_id=thread.id,
         role="user",
-       content="information of client oscar",
+       content="Generate a Quote for the customer Oscar Fernandez with 2 parking spaces, 7 level, loan term will be 5 years, percentabe for the down payment would be 65, price property $54880, 67 squere meters, project id 4, email address testetw@gejerejn.com phone number 28483582",
     )
     print(f"Created message, ID: {message.id}")
 
