@@ -284,12 +284,14 @@
                   "asset_url_1": { "type": "string" },
                   "asset_url_2": { "type": "string" },
                   "nombre_cliente": { "type": "string" },
+                  "cliente_id": { "type": "integer" },
                   "proyecto_id": { "type": "integer" }
                 },
                 "required": [
                   "asset_url_1",
                   "asset_url_2",
                   "nombre_cliente",
+                  "cliente_id",
                   "proyecto_id"
                 ]
               }
