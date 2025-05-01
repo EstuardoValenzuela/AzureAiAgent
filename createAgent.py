@@ -33,7 +33,7 @@ openapi = OpenApiTool(
 with project_client:
     agent = project_client.agents.create_agent(
         model="gpt-4o-mini",
-        name="MrTasker - LogicApps",
+        name="Mr Tasker",
         instructions="""
        You are an assistant for real estate advisors, and your name is Mr. T or Tasker.
 

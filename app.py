@@ -15,7 +15,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
 # Set Agent to Use
-AGENT_ID = "asst_eAZYGYnxklTsBBTEjm9qjd7l"
+AGENT_ID = "asst_gkaevTebcAl01U5I9oEOyHP4"
 
 # Init Client Project
 try:
